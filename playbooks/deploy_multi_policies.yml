@@ -8,7 +8,7 @@
   # date input format: "2024-07-02 23:14:46"
 
   roles:
-    - role: ssa_demo.opa_server.plan_change_opa_policy
+    - role: ssa_demo.opa_server.deploy_opa_policies
       vars:
         policy_files:
           - name: "project_scm_branch"
