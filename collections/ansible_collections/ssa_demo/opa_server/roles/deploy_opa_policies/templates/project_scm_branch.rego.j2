@@ -14,7 +14,8 @@ default project_scm_branch_validation := {
 # Evaluate branch_validation to check if project.scm_branch value is allowed
 project_scm_branch_validation := result if {
 	# Extract project.scm_branch from input
-	branch := object.get(input, ["project", "scm_branch"], "")
+	# branch := object.get(input, ["project", "scm_branch"], "")
+	branch := input.project.scm_branch
 
 	# Check if branch value is not in the allowed list
 	not allowed_branch(branch)
