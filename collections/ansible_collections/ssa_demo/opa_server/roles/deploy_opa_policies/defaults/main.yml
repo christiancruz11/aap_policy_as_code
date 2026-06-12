@@ -1,0 +1,16 @@
+# OPA configuration
+opa_policies_dir: "/var/lib/opa/policies"
+opa_user: "opa"
+opa_group: "opa"
+opa_service_name: "opa"
+opa_binary_path: "/usr/local/bin/opa"
+
+# Policy configuration
+policy_files:
+  - name: "project_scm_branch"
+    template: "project_scm_branch.rego"
+    dest_file: "project_scm_branch.rego"
+
+# Optional: Validation settings
+validate_policies: true
+reload_opa_after_update: true
