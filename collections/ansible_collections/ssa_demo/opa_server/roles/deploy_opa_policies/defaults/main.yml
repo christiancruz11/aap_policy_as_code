@@ -8,7 +8,7 @@ opa_binary_path: "/usr/local/bin/opa"
 # Policy configuration
 policy_files:
   - name: "project_scm_branch"
-    template: "project_scm_branch.rego"
+    template: "project_scm_branch.rego.j2"
     dest_file: "project_scm_branch.rego"
 
 # Optional: Validation settings
