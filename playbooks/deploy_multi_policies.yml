@@ -1,0 +1,16 @@
+---
+- name: Deploy OPA Plan Change Window Policy
+  hosts: "{{ opa_server | default('all') }}"
+  gather_facts: yes
+  become: yes
+
+  pre_tasks:  
+  # date input format: "2024-07-02 23:14:46"
+
+  roles:
+    - role: ssa_demo.opa_server.plan_change_opa_policy
+      vars:
+        policy_files:
+          - name: "project_scm_branch"
+            template: "project_scm_branch.rego"
+            dest_file: "project_scm_branch.rego"
