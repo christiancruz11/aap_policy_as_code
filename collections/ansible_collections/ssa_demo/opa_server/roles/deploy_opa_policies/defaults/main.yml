@@ -10,9 +10,9 @@ policy_files:
   - name: "project_scm_branch"
     template: "project_scm_branch.rego.j2"
     dest_file: "project_scm_branch.rego"
-  - name: "project_scm_branch"
-    template: "jt_naming_validation.rego.rego.j2"
-    dest_file: "jt_naming_validation.rego.rego"
+  - name: "jt_naming_validation"
+    template: "jt_naming_validation.rego.j2"
+    dest_file: "jt_naming_validation.rego"
 
 # Optional: Validation settings
 validate_policies: true
