@@ -1,5 +1,5 @@
 ---
-- name: Deploy OPA Plan Change Window Policy
+- name: Deploy Multiple OPA Policies
   hosts: "{{ opa_server | default('all') }}"
   gather_facts: yes
   become: yes
