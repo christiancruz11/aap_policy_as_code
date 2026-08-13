@@ -2,45 +2,33 @@ package policies
 
 import rego.v1
 
-# Define plan change window in UTC (Templated via Ansible or hardcoded)
-plan_change_start_utc := "{{ plan_change_start_utc }}"  # UTC
-plan_change_end_utc := "{{ plan_change_end_utc }}"      # UTC
-plan_change_start_nz := "{{ plan_change_start_time_nz }}"  # NZ
-plan_change_end_nz := "{{ plan_change_end_time_nz }}"      # NZ
+plan_change_start_utc := "{{ plan_change_start_utc }}"
+plan_change_end_utc := "{{ plan_change_end_utc }}"
 
-# Default response when outside the change window
 default plan_change_window := {
-    "allowed": true,
-    "violations": [],
+    "allowed": false,
+    "violations": [
+        sprintf(
+            "DEBUG: OUTSIDE window. Start=%s End=%s Created=%s",
+            [plan_change_start_utc, plan_change_end_utc, input.created]
+        )
+    ]
 }
 
-# Check if the job was created within the plan change window (UTC)
 is_plan_change_time if {
-    # Guard check: Only proceed if input.created exists in the AAP payload
     input.created
 
-    # Parse timestamps INSIDE the rule body
     created_clock := time.parse_rfc3339_ns(input.created)
     change_start := time.parse_rfc3339_ns(plan_change_start_utc)
     change_end := time.parse_rfc3339_ns(plan_change_end_utc)
 
-    print("created_clock: ", created_clock)
-    print("change_start:  ", change_start)
-    print("change_end:    ", change_end)
-
     created_clock >= change_start
-    created_clock <= change_end 
+    created_clock <= change_end
 }
 
-# Block execution during the change window
 plan_change_window := {
-    "allowed": false,
-    "violations": [
-        sprintf(
-            "No job execution allowed during plan change window (%s to %s UTC). Current time: %s.", 
-            [plan_change_start_utc, plan_change_end_utc, input.created]
-        )
-    ],
+    "allowed": true,
+    "violations": [],
 } if {
     is_plan_change_time
 }
