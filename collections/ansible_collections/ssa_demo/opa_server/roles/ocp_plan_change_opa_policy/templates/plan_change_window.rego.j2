@@ -34,7 +34,7 @@ is_plan_change_time if {
 
 # Block execution during the change window
 plan_change_window := {
-    "allowed": false,
+    "allowed": true,
     "violations": [
         sprintf("No job execution allowed during plan change window (%s to %s). Current time: %s.", [plan_change_start_nz, plan_change_end_nz, created_clock])
     ],
