@@ -1,6 +1,6 @@
 ---
 - name: Deploy OPA Plan Change Window Policy
-  hosts: localhost
+  hosts: "{{ opa_server | default('all') }}"
   gather_facts: yes
 
   pre_tasks:  
@@ -8,13 +8,14 @@
 
 
   - name: Convert NZST datetime to UTC RFC3339 format
-    ansible.builtin.set_fact:
+    set_fact:
       plan_change_start_utc: "{{ rfc3339_format | strftime(nzst_epoch_start, utc=true) }}"
       plan_change_end_utc: "{{ rfc3339_format | strftime(nzst_epoch_end, utc=true) }}"
+
     vars:
-      # Added | string to guarantee strptime receives a string
-      nzst_epoch_start: "{{ ((plan_change_start_time | string | to_datetime('%Y-%m-%d %H:%M:%S')).timestamp() - 43200) | int }}"
-      nzst_epoch_end: "{{ ((plan_change_end_time | string | to_datetime('%Y-%m-%d %H:%M:%S')).timestamp() - 43200) | int }}"
+      # Get epoch timestamp and subtract 12 hours (NZST offset) to get UTC
+      nzst_epoch_start: "{{ ((plan_change_start_time | to_datetime('%Y-%m-%d %H:%M:%S')).timestamp() - 43200) | int }}"  # 43200 = 12 * 60 * 60 seconds
+      nzst_epoch_end: "{{ ((plan_change_end_time | to_datetime('%Y-%m-%d %H:%M:%S')).timestamp() - 43200) | int }}"  # 43200 = 12 * 60 * 60 seconds
       rfc3339_format: "%Y-%m-%dT%H:%M:%S.000000000Z"
 
   - name: Print plan change window configuration
@@ -22,7 +23,7 @@
       msg: "Plan Change Window Configuration: Start Hour: {{ plan_change_start_utc }} End Hour: {{ plan_change_end_utc }}"
 
   roles:
-    - role: ssa_demo.opa_server.ocp_plan_change_opa_policy
+    - role: ssa_demo.opa_server.plan_change_opa_policy
       vars:
         plan_change_start: "{{ plan_change_start_utc }}"
         plan_change_end: "{{ plan_change_end_utc }}"
