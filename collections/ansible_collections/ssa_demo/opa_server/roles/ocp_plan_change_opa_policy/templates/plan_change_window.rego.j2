@@ -36,7 +36,7 @@ is_plan_change_time if {
 plan_change_window := {
     "allowed": false,
     "violations": [
-        sprintf("No job execution allowed during plan change window (%s to %s). Current time: %s. start: %s. end: %s", [plan_change_start_nz, plan_change_end_nz, created_clock, change_start, change_end])
+        sprintf("No job execution allowed during plan change window (%s to %s). Current time %s. start %s. end %s", [plan_change_start_nz, plan_change_end_nz, created_clock, change_start, change_end])
     ],
 } if {
     is_plan_change_time
