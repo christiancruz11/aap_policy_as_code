@@ -5,6 +5,8 @@ import rego.v1
 # Define plan change window in UTC (Templated via Ansible or hardcoded)
 plan_change_start_utc := "{{ plan_change_start_utc }}"  # UTC
 plan_change_end_utc := "{{ plan_change_end_utc }}"      # UTC
+plan_change_start_nz := "{{ plan_change_start_time_nz }}"  # NZ
+plan_change_end_nz := "{{ plan_change_end_time_nz }}"      # NZ
 
 # Default response when outside the change window
 default plan_change_window := {
@@ -34,7 +36,7 @@ is_plan_change_time if {
 plan_change_window := {
     "allowed": false,
     "violations": [
-        sprintf("No job execution allowed during plan change window (%s to %s)", [plan_change_start_utc, plan_change_end_utc])
+        sprintf("No job execution allowed during plan change window (%s to %s)", [plan_change_start_nz, plan_change_end_nz])
     ],
 } if {
     is_plan_change_time
