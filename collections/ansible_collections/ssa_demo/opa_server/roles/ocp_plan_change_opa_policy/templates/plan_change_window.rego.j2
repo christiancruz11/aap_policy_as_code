@@ -1,5 +1,7 @@
 package policies
 
+import rego.v1
+
 # Define plan change window in UTC
 plan_change_start := "2026-08-13T21:00:00.000000000Z"  # {{ plan_change_start_hour }}:00 UTC
 plan_change_end := "2026-08-13T21:30:00.000000000Z"      # {{ plan_change_end_hour }}:00 UTC
