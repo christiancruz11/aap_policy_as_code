@@ -1,8 +1,8 @@
 package policies
 
 # Define plan change window in UTC
-plan_change_start := "{{ plan_change_start }}"  # {{ plan_change_start_hour }}:00 UTC
-plan_change_end := "{{ plan_change_end }}"      # {{ plan_change_end_hour }}:00 UTC
+plan_change_start := "2026-08-13T21:00:00.000000000Z"  # {{ plan_change_start_hour }}:00 UTC
+plan_change_end := "2026-08-13T21:30:00.000000000Z"      # {{ plan_change_end_hour }}:00 UTC
 
 # Extract the job creation timestamp (which is in UTC)
 created_clock := time.parse_rfc3339_ns(input.created)
