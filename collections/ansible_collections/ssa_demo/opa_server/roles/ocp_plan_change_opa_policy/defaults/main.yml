@@ -1,0 +1,24 @@
+# # OPA configuration
+# opa_policies_dir: "/var/lib/opa/policies"
+# opa_user: "opa"
+# opa_group: "opa"
+# opa_service_name: "opa"
+# opa_binary_path: "/usr/local/bin/opa"
+
+# Default fallback configuration for OPA deployment
+opa_route_host: "opa-opa-server.apps.cluster-h8c5q-1.dyn.redhatworkshops.io"
+opa_policy_id: "plan_change_window"
+
+# Plan change window configuration (UTC hours)
+plan_change_start_hour: 12  # 12:00 UTC (5 PM EST)
+plan_change_end_hour: 7     # 07:00 UTC (2 AM EST)
+
+# Policy configuration
+policy_files:
+  - name: "plan_change_window"
+    template: "plan_change_window.rego.j2"
+    dest_file: "plan_change_window.rego"
+
+# # Optional: Validation settings
+# validate_policies: true
+# reload_opa_after_update: true

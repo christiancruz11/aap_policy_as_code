@@ -1,0 +1,17 @@
+---
+# Handlers are triggered if the HTTP PUT task updates a policy
+- name: Verify OPA cluster health
+  ansible.builtin.uri:
+    url: "http://{{ opa_route_host }}/health"
+    method: GET
+    status_code: 200
+  delegate_to: localhost
+
+- name: Audit loaded OPA policies
+  ansible.builtin.uri:
+    url: "http://{{ opa_route_host }}{{ opa_policy_api_path }}"
+    method: GET
+    status_code: 200
+  register: audit_response
+  delegate_to: localhost
+  

@@ -1,0 +1,11 @@
+# # Internal variables
+# opa_policy_extension: ".rego"
+
+---
+# Internal API configurations
+opa_policy_api_path: "/v1/policies"
+opa_http_headers:
+  Content-Type: "text/plain"
+opa_expected_http_status:
+  - 200
+  - 202
