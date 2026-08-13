@@ -14,8 +14,8 @@
 
     vars:
       # Get epoch timestamp and subtract 12 hours (NZST offset) to get UTC
-      nzst_epoch_start: "{{ ((plan_change_start_time | to_datetime('%Y-%m-%d %H:%M:%S')).timestamp() - 43200) | int }}"  # 43200 = 12 * 60 * 60 seconds
-      nzst_epoch_end: "{{ ((plan_change_end_time | to_datetime('%Y-%m-%d %H:%M:%S')).timestamp() - 43200) | int }}"  # 43200 = 12 * 60 * 60 seconds
+      nzst_epoch_start: "{{ ((plan_change_start_time_nz | to_datetime('%Y-%m-%d %H:%M:%S')).timestamp() - 43200) | int }}"  # 43200 = 12 * 60 * 60 seconds
+      nzst_epoch_end: "{{ ((plan_change_end_time_nz | to_datetime('%Y-%m-%d %H:%M:%S')).timestamp() - 43200) | int }}"  # 43200 = 12 * 60 * 60 seconds
       rfc3339_format: "%Y-%m-%dT%H:%M:%S.000000000Z"
 
   - name: Print plan change window configuration
@@ -25,5 +25,7 @@
   roles:
     - role: ssa_demo.opa_server.ocp_plan_change_opa_policy
       vars:
-        plan_change_start: "{{ plan_change_start_utc }}"
-        plan_change_end: "{{ plan_change_end_utc }}"
+        plan_change_start_utc: "{{ plan_change_start_utc }}"
+        plan_change_end_utc: "{{ plan_change_end_utc }}"
+        plan_change_start_time_nz: "{{ plan_change_start_time_nz }}"
+        plan_change_end_time_nz: "{{ plan_change_end_time_nz }}"
