@@ -52,3 +52,30 @@ plan_change_window := {
 } if {
     is_plan_change_time
 }
+
+debug_time if {
+    input.created
+
+    created_clock := time.parse_rfc3339_ns(input.created)
+    change_start := time.parse_rfc3339_ns(plan_change_start_utc)
+    change_end := time.parse_rfc3339_ns(plan_change_end_utc)
+
+    print("CREATED: ", input.created)
+    print("START:   ", plan_change_start_utc)
+    print("END:     ", plan_change_end_utc)
+
+    print("CREATED CLOCK: ", created_clock)
+    print("START CLOCK:   ", change_start)
+    print("END CLOCK:     ", change_end)
+}
+
+debug_values := {
+    "input_created": input.created,
+    "start_string": plan_change_start_utc,
+    "end_string": plan_change_end_utc,
+    "created_clock": time.parse_rfc3339_ns(input.created),
+    "start_clock": time.parse_rfc3339_ns(plan_change_start_utc),
+    "end_clock": time.parse_rfc3339_ns(plan_change_end_utc),
+    "created_gte_start": time.parse_rfc3339_ns(input.created) >= time.parse_rfc3339_ns(plan_change_start_utc),
+    "created_lte_end": time.parse_rfc3339_ns(input.created) <= time.parse_rfc3339_ns(plan_change_end_utc),
+}
