@@ -2,15 +2,15 @@ package policies
 
 import rego.v1
 
-plan_change_start := "{{ plan_change_start }}"
-plan_change_end := "{{ plan_change_end }}"
+plan_change_start_utc := "{{ plan_change_start_utc }}"
+plan_change_end_utc := "{{ plan_change_end_utc }}"
 
 default plan_change_window := {
     "allowed": false,
     "violations": [
         sprintf(
             "DEBUG: OUTSIDE window. Start=%s End=%s Created=%s",
-            [plan_change_start, plan_change_end, input.created]
+            [plan_change_start_utc, plan_change_end_utc, input.created]
         )
     ]
 }
@@ -19,8 +19,8 @@ is_plan_change_time if {
     input.created
 
     created_clock := time.parse_rfc3339_ns(input.created)
-    change_start := time.parse_rfc3339_ns(plan_change_start)
-    change_end := time.parse_rfc3339_ns(plan_change_end)
+    change_start := time.parse_rfc3339_ns(plan_change_start_utc)
+    change_end := time.parse_rfc3339_ns(plan_change_end_utc)
 
     created_clock >= change_start
     created_clock <= change_end
