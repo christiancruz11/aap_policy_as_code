@@ -3,8 +3,8 @@ package policies
 import rego.v1
 
 # Define plan change window in UTC (Templated via Ansible or hardcoded)
-plan_change_start := "2026-08-13T21:00:00.000000000Z"
-plan_change_end := "2026-08-13T21:30:00.000000000Z"
+plan_change_start := "{{ plan_change_start }}"  # UTC
+plan_change_end := "{{ plan_change_end }}"      # UTC
 
 # Default response when outside the change window
 default plan_change_window := {
