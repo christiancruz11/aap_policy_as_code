@@ -23,7 +23,7 @@
       msg: "Plan Change Window Configuration: Start Hour: {{ plan_change_start_utc }} End Hour: {{ plan_change_end_utc }}"
 
   roles:
-    - role: ssa_demo.opa_server.plan_change_opa_policy
+    - role: ssa_demo.opa_server.ocp_plan_change_opa_policy
       vars:
         plan_change_start: "{{ plan_change_start_utc }}"
         plan_change_end: "{{ plan_change_end_utc }}"
