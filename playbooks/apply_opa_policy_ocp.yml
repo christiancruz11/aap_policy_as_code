@@ -2,7 +2,6 @@
 - name: Deploy OPA Plan Change Window Policy
   hosts: localhost
   gather_facts: yes
-  become: yes
 
   pre_tasks:  
   # date input format: "2024-07-02 23:14:46"
