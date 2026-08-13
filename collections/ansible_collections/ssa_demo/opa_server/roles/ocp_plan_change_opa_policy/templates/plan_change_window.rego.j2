@@ -14,16 +14,20 @@ default plan_change_window := {
     "violations": [],
 }
 
-# Extract the job creation timestamp (which is in UTC)
-created_clock := time.parse_rfc3339_ns(input.created)
-change_start := time.parse_rfc3339_ns(plan_change_start_utc)
-change_end := time.parse_rfc3339_ns(plan_change_end_utc)
-
 # Check if the job was created within the plan change window (UTC)
 is_plan_change_time if {
+    # Guard check: Only proceed if input.created exists in the AAP payload
+    input.created
+
+    # Parse timestamps INSIDE the rule body
+    created_clock := time.parse_rfc3339_ns(input.created)
+    change_start := time.parse_rfc3339_ns(plan_change_start_utc)
+    change_end := time.parse_rfc3339_ns(plan_change_end_utc)
+
     print("created_clock: ", created_clock)
     print("change_start:  ", change_start)
     print("change_end:    ", change_end)
+
     created_clock >= change_start
     created_clock <= change_end 
 }
