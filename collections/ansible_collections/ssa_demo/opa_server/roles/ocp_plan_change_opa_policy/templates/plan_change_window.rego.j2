@@ -19,8 +19,8 @@ is_plan_change_time if {
 
     # Parse timestamps INSIDE the rule body
     created_clock := time.parse_rfc3339_ns(input.created)
-    change_start := time.parse_rfc3339_ns(plan_change_start)
-    change_end := time.parse_rfc3339_ns(plan_change_end)
+    change_start := time.parse_rfc3339_ns(plan_change_start_utc)
+    change_end := time.parse_rfc3339_ns(plan_change_end_utc)
 
     print("created_clock: ", created_clock)
     print("change_start:  ", change_start)
