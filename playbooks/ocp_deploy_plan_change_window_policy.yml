@@ -18,9 +18,13 @@
       nzst_epoch_end: "{{ ((plan_change_end_time_nz | to_datetime('%Y-%m-%d %H:%M:%S')).timestamp() - 43200) | int }}"  # 43200 = 12 * 60 * 60 seconds
       rfc3339_format: "%Y-%m-%dT%H:%M:%S.000000000Z"
 
-  - name: Print plan change window configuration
+  - name: Print plan change window configuration (UTC)
     debug:
-      msg: "Plan Change Window Configuration: Start Hour: {{ plan_change_start_utc }} End Hour: {{ plan_change_end_utc }}"
+      msg: "Plan Change Window Configuration (UTC): Start Hour: {{ plan_change_start_utc }} End Hour: {{ plan_change_end_utc }}"
+
+  - name: Print plan change window configuration (NZ timezone)
+    debug:
+      msg: "Plan Change Window Configuration (NZ timezone): Start Hour: {{ plan_change_start_time_nz }} End Hour: {{ plan_change_end_time_nz }}"
 
   roles:
     - role: ssa_demo.opa_server.ocp_plan_change_opa_policy
