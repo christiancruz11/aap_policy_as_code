@@ -14,6 +14,14 @@ default plan_change_window := {
     "violations": [],
 }
 
+# Helper rule: Formats input.created into NZ Local Time (Pacific/Auckland)
+nz_current_time := sprintf("%02d/%02d/%04d %02d:%02d:%02d", [day, month, year, hour, min, sec]) if {
+    input.created
+    created_ns := time.parse_rfc3339_ns(input.created)
+    [year, month, day] := time.date([created_ns, "Pacific/Auckland"])
+    [hour, min, sec] := time.clock([created_ns, "Pacific/Auckland"])
+}
+
 # Check if the job was created within the plan change window (UTC)
 is_plan_change_time if {
     # Guard check: Only proceed if input.created exists in the AAP payload
@@ -35,13 +43,15 @@ is_plan_change_time if {
 # Block execution during the change window
 plan_change_window := {
     "allowed": false,
-    "violations": [
+"violations": [
         sprintf(
-            "No job execution allowed during plan change window. NZ time: %s to %s. Current time: %s NZ (UTC: %s).",
+            "No job execution allowed during plan change window (%s to %s NZST / %s to %s UTC). Current time: %s NZST (%s UTC).", 
             [
-                plan_change_start_nz,
-                plan_change_end_nz,
-                time.format(time.add_date(time.parse_rfc3339_ns(input.created), 0, 0, 0, 12, 0, 0)),
+                plan_change_start_nz, 
+                plan_change_end_nz, 
+                plan_change_start_utc, 
+                plan_change_end_utc, 
+                nz_current_time, 
                 input.created
             ]
         )
