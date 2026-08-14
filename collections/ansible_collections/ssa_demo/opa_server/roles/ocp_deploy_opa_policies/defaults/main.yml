@@ -7,4 +7,4 @@ opa_proto: "http"
 opa_url: "{{ opa_proto }}://{{ opa_route_host }}"
 
 # Path to the policies directory relative to playbook execution
-opa_policies_source_dir: "{{ playbook_dir }}/../aap_policy_as_code"
+opa_policies_source_dir: "{{ playbook_dir }}/../aap_policy_examples"
