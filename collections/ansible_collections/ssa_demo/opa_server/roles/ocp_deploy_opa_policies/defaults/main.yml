@@ -1,0 +1,10 @@
+---
+# OpenShift Route Host
+opa_route_host: "opa-opa-server.apps.cluster-h8c5q-1.dyn.redhatworkshops.io"
+opa_proto: "http"
+
+# Dynamically built OPA URL
+opa_url: "{{ opa_proto }}://{{ opa_route_host }}"
+
+# Path to the policies directory relative to playbook execution
+opa_policies_source_dir: "{{ playbook_dir }}/../aap_policy_as_code"

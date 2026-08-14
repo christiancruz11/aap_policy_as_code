@@ -1,0 +1,9 @@
+- name: Deploy OPA Policies
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  roles:
+    - role: ocp_deploy_opa_policies
+      vars:
+        opa_route_host: "opa-opa-server.apps.cluster-h8c5q-1.dyn.redhatworkshops.io"
