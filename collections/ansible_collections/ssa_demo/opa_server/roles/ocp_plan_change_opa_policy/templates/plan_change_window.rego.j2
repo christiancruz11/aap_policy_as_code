@@ -44,15 +44,15 @@ is_plan_change_time if {
 plan_change_window := {
     "allowed": false,
 "violations": [
-        sprintf(
-            "No job execution allowed during plan change window (%s to %s NZST). Current time: %s NZST.", 
-            [
-                plan_change_start_nz, 
-                plan_change_end_nz, 
-                nz_current_time
-            ]
-        )
-    ],
+    sprintf(
+        "No job execution allowed during plan change window:\n (%s to %s NZST).\nCurrent date and time: %s NZST.", 
+        [
+            plan_change_start_nz, 
+            plan_change_end_nz, 
+            nz_current_time
+        ]
+    )
+],
 } if {
     is_plan_change_time
 }
