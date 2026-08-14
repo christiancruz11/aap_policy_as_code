@@ -37,8 +37,13 @@ plan_change_window := {
     "allowed": false,
     "violations": [
         sprintf(
-            "No job execution allowed during plan change window (%s to %s UTC). Current time: %s.", 
-            [plan_change_start_utc, plan_change_end_utc, input.created]
+            "No job execution allowed during plan change window. NZ time: %s to %s. Current time: %s NZ (UTC: %s).",
+            [
+                plan_change_start_nz,
+                plan_change_end_nz,
+                time.format(time.add_date(time.parse_rfc3339_ns(input.created), 0, 0, 0, 12, 0, 0)),
+                input.created
+            ]
         )
     ],
 } if {
