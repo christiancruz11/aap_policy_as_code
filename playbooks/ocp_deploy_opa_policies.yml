@@ -4,6 +4,6 @@
   gather_facts: false
 
   roles:
-    - role: ocp_deploy_opa_policies
+    - role: ssa_demo.opa_server.ocp_deploy_opa_policies
       vars:
         opa_route_host: "opa-opa-server.apps.cluster-h8c5q-1.dyn.redhatworkshops.io"
