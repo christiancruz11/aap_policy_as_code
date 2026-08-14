@@ -2,80 +2,45 @@ package policies
 
 import rego.v1
 
-# Plan change window in UTC
-plan_change_start_utc := "2026-08-14T21:00:00.000000000Z"
-plan_change_end_utc := "2026-08-15T01:30:00.000000000Z"
+# Define plan change window in UTC (Templated via Ansible or hardcoded)
+plan_change_start_utc := "{{ plan_change_start_utc }}"  # UTC
+plan_change_end_utc := "{{ plan_change_end_utc }}"      # UTC
+plan_change_start_nz := "{{ plan_change_start_time_nz }}"  # NZ
+plan_change_end_nz := "{{ plan_change_end_time_nz }}"      # NZ
 
-# Plan change window in NZ time (informational)
-plan_change_start_nz := "2026-08-15 09:00:00"
-plan_change_end_nz := "2026-08-15 13:30:00"
-
-# Default: allow execution
+# Default response when outside the change window
 default plan_change_window := {
     "allowed": true,
     "violations": [],
 }
 
-# Check if the job was created within the plan change window
+# Check if the job was created within the plan change window (UTC)
 is_plan_change_time if {
+    # Guard check: Only proceed if input.created exists in the AAP payload
     input.created
 
+    # Parse timestamps INSIDE the rule body
     created_clock := time.parse_rfc3339_ns(input.created)
     change_start := time.parse_rfc3339_ns(plan_change_start_utc)
     change_end := time.parse_rfc3339_ns(plan_change_end_utc)
 
-    print("========== PLAN CHANGE DEBUG ==========")
-    print("input.created:     ", input.created)
-    print("start UTC:         ", plan_change_start_utc)
-    print("end UTC:           ", plan_change_end_utc)
-    print("created_clock:     ", created_clock)
-    print("change_start:      ", change_start)
-    print("change_end:        ", change_end)
+    print("created_clock: ", created_clock)
+    print("change_start:  ", change_start)
+    print("change_end:    ", change_end)
 
     created_clock >= change_start
-    created_clock <= change_end
+    created_clock <= change_end 
 }
 
-# Block execution when inside the change window
+# Block execution during the change window
 plan_change_window := {
     "allowed": false,
     "violations": [
         sprintf(
-            "No job execution allowed during plan change window (%s to %s UTC). Current time: %s.",
-            [
-                plan_change_start_utc,
-                plan_change_end_utc,
-                input.created
-            ]
+            "No job execution allowed during plan change window (%s to %s UTC). Current time: %s.", 
+            [plan_change_start_utc, plan_change_end_utc, input.created]
         )
     ],
 } if {
     is_plan_change_time
-}
-
-debug_time if {
-    input.created
-
-    created_clock := time.parse_rfc3339_ns(input.created)
-    change_start := time.parse_rfc3339_ns(plan_change_start_utc)
-    change_end := time.parse_rfc3339_ns(plan_change_end_utc)
-
-    print("CREATED: ", input.created)
-    print("START:   ", plan_change_start_utc)
-    print("END:     ", plan_change_end_utc)
-
-    print("CREATED CLOCK: ", created_clock)
-    print("START CLOCK:   ", change_start)
-    print("END CLOCK:     ", change_end)
-}
-
-debug_values := {
-    "input_created": input.created,
-    "start_string": plan_change_start_utc,
-    "end_string": plan_change_end_utc,
-    "created_clock": time.parse_rfc3339_ns(input.created),
-    "start_clock": time.parse_rfc3339_ns(plan_change_start_utc),
-    "end_clock": time.parse_rfc3339_ns(plan_change_end_utc),
-    "created_gte_start": time.parse_rfc3339_ns(input.created) >= time.parse_rfc3339_ns(plan_change_start_utc),
-    "created_lte_end": time.parse_rfc3339_ns(input.created) <= time.parse_rfc3339_ns(plan_change_end_utc),
 }
