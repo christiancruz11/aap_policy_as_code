@@ -45,14 +45,11 @@ plan_change_window := {
     "allowed": false,
 "violations": [
         sprintf(
-            "No job execution allowed during plan change window (%s to %s NZST / %s to %s UTC). Current time: %s NZST (%s UTC).", 
+            "No job execution allowed during plan change window (%s to %s NZST). Current time: %s NZST.", 
             [
                 plan_change_start_nz, 
                 plan_change_end_nz, 
-                plan_change_start_utc, 
-                plan_change_end_utc, 
-                nz_current_time, 
-                input.created
+                nz_current_time
             ]
         )
     ],
