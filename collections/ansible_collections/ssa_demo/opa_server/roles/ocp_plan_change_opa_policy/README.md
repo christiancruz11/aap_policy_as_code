@@ -1,149 +1,79 @@
-# roles/opa-policies/README.md
+<!-- DOCSIBLE START -->
 
-# OPA Policies Ansible Role
+# 📃 Role overview
 
-This Ansible role deploys OPA Rego policies using Jinja2 templates, allowing for dynamic configuration through Ansible variables.
+## ocp_plan_change_opa_policy
 
-## Requirements
 
-- Ansible 2.9 or higher
-- OPA already installed and running (use the `opa` role first)
-- Target system: Linux
 
-## Role Variables
 
-### Default Variables (defaults/main.yml)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `opa_policies_dir` | `/var/lib/opa/policies` | Directory for OPA policy files |
-| `opa_user` | `opa` | OPA service user |
-| `opa_group` | `opa` | OPA service group |
-| `opa_service_name` | `opa` | OPA systemd service name |
-| `plan_change_start_hour` | `12` | Plan change window start (UTC) |
-| `plan_change_end_hour` | `7` | Plan change window end (UTC) |
-| `validate_policies` | `true` | Validate policies after deployment |
-| `reload_opa_after_update` | `true` | Reload OPA service after updates |
+| Field                | Value           |
+|--------------------- |-----------------|
+| Readme update        | 2026/08/15 |
 
-### Policy Configuration
 
-The `policy_files` variable defines which policies to deploy:
 
-```yaml
-policy_files:
-  - name: "plan-change-window"
-    template: "plan-change-window.rego.j2"
-    dest_file: "plan-change-window.rego"
-```
 
-## Plan Change Window Logic
 
-The plan change window policy prevents job execution during specified hours:
 
-- **Start Hour**: Jobs created at or after this hour (UTC) are blocked
-- **End Hour**: Jobs created at or before this hour (UTC) are blocked
-- **Example**: Start=12, End=7 blocks jobs from 12:00 UTC to 07:59 UTC next day
 
-### Time Zone Examples
 
-| UTC Hours | EST | PST | Description |
-|-----------|-----|-----|-------------|
-| 12-07 | 7PM-2AM | 4PM-11PM | Default window |
-| 22-06 | 5PM-1AM | 2PM-10PM | Alternative window |
+### Defaults
 
-## Dependencies
+**These are static variables with lower priority**
 
-- OPA must be installed and running
-- Requires the `opa` role or equivalent OPA installation
+#### File: defaults/main.yml
 
-## Example Playbook
+| Var          | Type         | Value       |
+|--------------|--------------|-------------|
+| [opa_route_host](defaults/main.yml#L9)   | str | `opa-opa-server.apps.cluster-h8c5q-1.dyn.redhatworkshops.io` |    
+| [opa_policy_id](defaults/main.yml#L10)   | str | `plan_change_window` |    
+| [plan_change_start_hour](defaults/main.yml#L13)   | int | `12` |    
+| [plan_change_end_hour](defaults/main.yml#L14)   | int | `7` |    
+| [policy_files](defaults/main.yml#L17)   | list | `[]` |    
+| [policy_files.**0**](defaults/main.yml#L18)   | dict | `{}` |    
+| [policy_files.0.**name**](defaults/main.yml#L18)   | str | `plan_change_window` |    
+| [policy_files.0.**template**](defaults/main.yml#L19)   | str | `plan_change_window.rego.j2` |    
+| [policy_files.0.**dest_file**](defaults/main.yml#L20)   | str | `plan_change_window.rego` |    
 
-```yaml
----
-- hosts: opa-servers
-  become: true
-  roles:
-    # First install OPA
-    - role: opa
-      vars:
-        opa_version: "0.57.0"
-    
-    # Then deploy policies
-    - role: opa-policies
-      vars:
-        plan_change_start_hour: 14  # 2 PM UTC
-        plan_change_end_hour: 6     # 6 AM UTC
-        validate_policies: true
-        policy_files:
-          - name: "plan-change-window"
-            template: "plan-change-window.rego.j2"
-            dest_file: "plan-change-window.rego"
-```
 
-## Advanced Configuration
+### Vars
 
-### Multiple Policies
+**These are variables with higher priority**
+#### File: vars/main.yml
 
-```yaml
-policy_files:
-  - name: "plan-change-window"
-    template: "plan-change-window.rego.j2"
-    dest_file: "plan-change-window.rego"
-  - name: "custom-policy"
-    template: "custom-policy.rego.j2"
-    dest_file: "custom-policy.rego"
-```
+| Var          | Type         | Value       |
+|--------------|--------------|-------------|
+| [opa_policy_api_path](vars/main.yml#L6)   | str | `/v1/policies` |    
+| [opa_http_headers](vars/main.yml#L7)   | dict | `{}` |    
+| [opa_http_headers.**Content-Type**](vars/main.yml#L8)   | str | `text/plain` |    
+| [opa_expected_http_status](vars/main.yml#L9)   | list | `[]` |    
+| [opa_expected_http_status.**0**](vars/main.yml#L10)   | int | `200` |    
+| [opa_expected_http_status.**1**](vars/main.yml#L11)   | int | `202` |    
 
-### Custom Time Windows
 
-```yaml
-# Block jobs from 10 PM UTC to 8 AM UTC
-plan_change_start_hour: 22
-plan_change_end_hour: 8
-```
+### Tasks
 
-## Testing the Policy
 
-After deployment, test the policy:
+#### File: tasks/main.yml
 
-```bash
-# Test with OPA CLI
-opa eval -d /var/lib/opa/policies \
-  -i '{"created": "2024-01-15T13:30:00Z"}' \
-  "data.policies.plan_change_window"
+| Name | Module | Has Conditions |
+| ---- | ------ | -------------- |
+| Deploy rendered Rego policy to OpenShift OPA REST API | ansible.builtin.uri | False |
+| Display policy deployment status | ansible.builtin.debug | True |
+| Fetch details for the deployed policy | ansible.builtin.uri | False |
+| Show active policy definition ID | ansible.builtin.debug | False |
 
-# Expected output during blocked hours:
-# {
-#   "allowed": false,
-#   "violations": ["No job execution allowed during plan change window"]
-# }
-```
 
-### Sample Input Data
 
-```json
-{
-  "created": "2024-01-15T13:30:00Z"
-}
-```
 
-## Policy Output
 
-The policy returns:
-- `allowed`: Boolean indicating if job execution is allowed
-- `violations`: Array of violation messages
-- `plan_change_info`: Additional context about the window
 
-## Troubleshooting
 
-1. **Policy Validation Fails**: Check Rego syntax in templates
-2. **OPA Service Won't Reload**: Verify OPA service is running
-3. **Policy Not Taking Effect**: Check file permissions and OPA data directory
 
-## License
 
-MIT
+#### Dependencies
 
-## Author Information
-
-Created for OPA policy management and deployment automation.
+No dependencies specified.
+<!-- DOCSIBLE END -->
