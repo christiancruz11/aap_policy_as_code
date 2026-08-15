@@ -3,7 +3,7 @@ package aap_policy_examples
 import rego.v1
 
 # Define allowed values for project.scm_branch
-valid_project_scm_branch_values := ["main", "master" "v1"]
+valid_project_scm_branch_values := ["main", "master", "v1"]
 
 # Default policy response indicating allowed status with no violations
 default project_scm_branch_validation := {
