@@ -15,8 +15,8 @@ jt_naming_validation := result if {
     project_name := object.get(input, ["project", "name"], "")
     jt_name := object.get(input, ["job_template", "name"], "")
 
-    # Construct the expected prefix
-    expected_prefix := concat("_", [org_name, project_name])
+    # Construct the expected prefix with trailing underscore
+    expected_prefix := sprintf("%v_%v_", [org_name, project_name])
 
     # Check if job template name starts with expected prefix
     not startswith(jt_name, expected_prefix)
